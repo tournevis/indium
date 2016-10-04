@@ -3,13 +3,23 @@
   <head>
     <meta charset="UTF-8">
     <title>Hello World!</title>
+    <link rel="stylesheet" href="/css/font.css" media="screen" title="no title">
+    <link rel="stylesheet" href="./css/main.css" media="screen" title="no title">
   </head>
   <body>
-    <h1>Yo!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    We are using node <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
+    <canvas id="canvas"></canvas>
+    <div id="searchOverlay">
+      <div class="searchIntro">
+        <h2>Search</h2>
+        <p>Chercher un Hashtag ou un Mot sur Twitter </p>
+      </div>
+      <div class="inputContainer">
+        <input id="inputTweet" v-model="message">
+        <button type="button" name="button" @click="startSearch(message)">
+          <img src="./assets/search.png" alt="" />
+        </button>
+      </div>
+    </div>
   </body>
 
   <script>

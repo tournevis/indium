@@ -1,1 +1,3 @@
 node_modules
+test-darwin-x64
+test-linux-ia32

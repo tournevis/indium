@@ -103,4 +103,4 @@ let astate = {
 		this.vy += ay;
 	}
 }
-module.export = astate;
+module.exports = astate;
