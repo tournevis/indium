@@ -68,6 +68,17 @@ let utils = {
 
 	randomInt: function(min, max) {
 		return Math.floor(min + Math.random() * (max - min + 1));
-	}
+	},
+	fadeOut : function (el){
+	 el.style.opacity = 1;
+	 (function fade() {
+		 console.log("bolbos");
+		 if ((el.style.opacity -= .1) < 0) {
+			 el.style.display = "none";
+		 } else {
+			 requestAnimationFrame(fade);
+		 }
+	 })();
+ 	}
 }
 module.exports =utils

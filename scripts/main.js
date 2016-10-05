@@ -3,6 +3,7 @@ import particle from './astate'
 import utils from './utils'
 import io from 'socket.io-client'
 import Pixi from 'pixi.js'
+import listM from './listManager'
 const socket = io('http://5.196.7.169:3030')
 //console.log(astate);
 console.log(utils);
@@ -72,3 +73,25 @@ window.onload = function() {
 socket.on('connect', function(){
   console.log('yo');
 });
+socket.on('newTweet',function (data) {
+	console.log(data);
+	listM.pushTweet(data.name, data.screenName, data.content)
+	listM.display('tweetList');
+})
+
+
+let b = document.getElementById("searchButton");
+b.onclick = function(){
+	 let filter = document.getElementById('inputTweet').value
+	 if(filter.length>3){
+		 socket.emit('getTweet',filter)
+
+		 var over = document.getElementById('searchOverlay')
+		 utils.fadeOut(over);
+		 console.log("Start searching : " + filter);
+	 }else{
+		 var error = document.getElementById('errorInput');
+		 error.innerHTML = ' Filter is too short  !'
+		 console.log("Filter not enough long  : " + filter);
+	 }
+ }

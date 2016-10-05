@@ -19,6 +19,7 @@ letter-spacing: 2px;
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
+  display:block;
   text-align: center;
   width: 80%;
   color: white;
@@ -36,6 +37,7 @@ letter-spacing: 2px;
   background-blend-mode: screen;
   color: white;
 }
+
 button{
   width: 50px;
     padding: 0;
@@ -50,4 +52,48 @@ button >img{
 .logo {
   width: 100px;
   height: 100px
+}
+.listContainer{
+    list-style: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    text-align: right;
+    color: white;
+    padding: 10px;
+    background: rgba(255,255,255,0.2);
+}
+.listContainer > ul {
+  padding: 0;
+  list-style: none;
+}
+.listContainer > li {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+.listContainer > span{
+  width: 100%;
+    display: block;
+}
+.tweetName{
+  font-size: 1em;
+  font-family: 'GothamBold';
+  width: 100%;
+  display: block;
+  margin-top: 20px;
+}
+.screenName{
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom:10px;
+  display: block;
+  font-size: 0.8em;
+}
+.tweetContent{
+  width: 100%;
+  display: block;
+  font-size: 0.6em;
+  font-family: 'Gotham-Book';
+
 }

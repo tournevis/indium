@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="./css/main.css" media="screen" title="no title">
   </head>
   <body>
+
     <canvas id="canvas"></canvas>
     <div id="searchOverlay">
       <div class="searchIntro">
@@ -15,10 +16,16 @@
       </div>
       <div class="inputContainer">
         <input id="inputTweet" v-model="message">
-        <button type="button" name="button" @click="startSearch(message)">
+        <p id="errorInput"></p>
+        <button type="button" id="searchButton"name="button" onclick="startSearch()">
           <img src="./assets/search.png" alt="" />
         </button>
       </div>
+    </div>
+    <div class="listContainer">
+      <ul id="tweetList">
+
+      </ul>
     </div>
   </body>
 

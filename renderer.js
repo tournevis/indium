@@ -69,6 +69,10 @@
 
 	var _pixi2 = _interopRequireDefault(_pixi);
 
+	var _listManager = __webpack_require__(55);
+
+	var _listManager2 = _interopRequireDefault(_listManager);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var socket = (0, _socket2.default)('http://5.196.7.169:3030');
@@ -134,6 +138,27 @@
 	socket.on('connect', function () {
 		console.log('yo');
 	});
+	socket.on('newTweet', function (data) {
+		console.log(data);
+		_listManager2.default.pushTweet(data.name, data.screenName, data.content);
+		_listManager2.default.display('tweetList');
+	});
+
+	var b = document.getElementById("searchButton");
+	b.onclick = function () {
+		var filter = document.getElementById('inputTweet').value;
+		if (filter.length > 3) {
+			socket.emit('getTweet', filter);
+
+			var over = document.getElementById('searchOverlay');
+			_utils2.default.fadeOut(over);
+			console.log("Start searching : " + filter);
+		} else {
+			var error = document.getElementById('errorInput');
+			error.innerHTML = ' Filter is too short  !';
+			console.log("Filter not enough long  : " + filter);
+		}
+	};
 
 /***/ },
 /* 2 */
@@ -319,6 +344,17 @@
 
 		randomInt: function randomInt(min, max) {
 			return Math.floor(min + Math.random() * (max - min + 1));
+		},
+		fadeOut: function fadeOut(el) {
+			el.style.opacity = 1;
+			(function fade() {
+				console.log("bolbos");
+				if ((el.style.opacity -= .1) < 0) {
+					el.style.display = "none";
+				} else {
+					requestAnimationFrame(fade);
+				}
+			})();
 		}
 	};
 	module.exports = utils;
@@ -7960,6 +7996,53 @@
 	//# sourceMappingURL=pixi.min.js.map
 
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 55 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var listManager = {
+	  size: 10,
+	  id: '',
+	  liArray: [],
+
+	  create: function create() {},
+	  pushTweet: function pushTweet(tweetName, screenName, tweetContent) {
+	    var li = document.createElement('li');
+	    var sName = document.createElement('span');
+	    var sScreen = document.createElement('span');
+	    var sContent = document.createElement('span');
+	    sName.appendChild(document.createTextNode(tweetName));
+	    sName.setAttribute("class", "tweetName");
+	    sScreen.appendChild(document.createTextNode('@' + screenName));
+	    sScreen.setAttribute("class", "screenName");
+	    sContent.appendChild(document.createTextNode(tweetContent));
+	    sContent.setAttribute("class", "tweetContent");
+
+	    li.appendChild(sName);
+	    li.appendChild(sScreen);
+	    li.appendChild(sContent);
+	    for (var i = 0; i < this.size; i++) {
+	      this.liArray[i + 1] = this.liArray[i];
+	      this.liArray[0] = li;
+	    }
+	    this.liArray.push(li);
+	  },
+	  display: function display(id) {
+	    var ul = document.getElementById(id);
+	    var ulChild = ul.children;
+	    for (var i = 9; i < ulChild.length; i++) {
+	      ulChild[i].remove();
+	    }
+	    for (var i = 0; i < this.size; i++) {
+	      ul.appendChild(this.liArray[i]);
+	    }
+	  }
+
+	};
+	module.exports = listManager;
 
 /***/ }
 /******/ ]);
