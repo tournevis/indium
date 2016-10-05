@@ -81,10 +81,12 @@
 	window.onload = function () {
 
 		var canvas = document.getElementById("canvas"),
+		    b = document.getElementById("searchButton"),
 		    context = canvas.getContext("2d"),
 		    width = canvas.width = window.innerWidth,
-		    height = canvas.height = window.innerHeight * 2,
-		    sun1 = _astate2.default.create(300, 150, 0, 0),
+		    height = canvas.height = window.innerHeight;
+
+		var sun1 = _astate2.default.create(300, 150, 0, 0),
 		    sun2 = _astate2.default.create(800, 600, 0, 0),
 		    emitter = {
 			x: 100,
@@ -97,6 +99,14 @@
 		sun2.mass = 20000;
 		sun2.radius = 20;
 		context.font = "48px serif";
+
+		function setup() {
+			var sprite = new _pixi2.default.Sprite(_pixi2.default.loader.resources["./assets/sun.png"].texture);
+			sprite.x = 90;
+			sprite.y = 90;
+			stage.addChild(sprite);
+		}
+
 		for (var i = 0; i < numParticles; i += 1) {
 			var p = _astate2.default.create(emitter.x, emitter.y, _utils2.default.randomRange(7, 8), Math.PI / 2 + _utils2.default.randomRange(-0.1, 0.1));
 			p.addGravitation(sun1);
@@ -105,13 +115,16 @@
 			particles.push(p);
 		}
 
+		_listManager2.default.create('tweetList');
 		update();
+
 
 		function update() {
 			context.clearRect(0, 0, width, height);
 
-			draw(sun1, "white");
-			draw(sun2, "yellow");
+			context.drawImage(document.getElementById('sun'), sun1.x - 50, sun1.y - 50);
+			context.drawImage(document.getElementById('sun'), sun2.x - 50, sun2.y - 50);
+
 			for (var i = 0; i < numParticles; i += 1) {
 				var p = particles[i];
 				p.update();
@@ -128,12 +141,27 @@
 		}
 
 		function draw(p, color) {
+
 			context.fillStyle = color;
 			context.beginPath();
 			context.arc(p.x, p.y, p.radius, 0, Math.PI * 2, false);
 
 			context.fill();
 		}
+
+		b.onclick = function () {
+			var filter = document.getElementById('inputTweet').value;
+			if (filter.length > 3) {
+				socket.emit('getTweet', filter);
+				var over = document.getElementById('searchOverlay');
+				_utils2.default.fadeOut(over);
+				console.log("Start searching : " + filter);
+			} else {
+				var error = document.getElementById('errorInput');
+				error.innerHTML = ' Filter is too short  !';
+				console.log("Filter not enough long  : " + filter);
+			}
+		};
 	};
 	socket.on('connect', function () {
 		console.log('yo');
@@ -141,24 +169,8 @@
 	socket.on('newTweet', function (data) {
 		console.log(data);
 		_listManager2.default.pushTweet(data.name, data.screenName, data.content);
-		_listManager2.default.display('tweetList');
+		_listManager2.default.display();
 	});
-
-	var b = document.getElementById("searchButton");
-	b.onclick = function () {
-		var filter = document.getElementById('inputTweet').value;
-		if (filter.length > 3) {
-			socket.emit('getTweet', filter);
-
-			var over = document.getElementById('searchOverlay');
-			_utils2.default.fadeOut(over);
-			console.log("Start searching : " + filter);
-		} else {
-			var error = document.getElementById('errorInput');
-			error.innerHTML = ' Filter is too short  !';
-			console.log("Filter not enough long  : " + filter);
-		}
-	};
 
 /***/ },
 /* 2 */
@@ -8004,11 +8016,14 @@
 	'use strict';
 
 	var listManager = {
-	  size: 10,
+	  size: 9,
 	  id: '',
 	  liArray: [],
 
-	  create: function create() {},
+	  create: function create(id) {
+	    this.id = id;
+	    this.liArray.length = this.size;
+	  },
 	  pushTweet: function pushTweet(tweetName, screenName, tweetContent) {
 	    var li = document.createElement('li');
 	    var sName = document.createElement('span');
@@ -8030,11 +8045,14 @@
 	    }
 	    this.liArray.push(li);
 	  },
-	  display: function display(id) {
-	    var ul = document.getElementById(id);
+	  display: function display() {
+	    var ul = document.getElementById(this.id);
 	    var ulChild = ul.children;
-	    for (var i = 9; i < ulChild.length; i++) {
-	      ulChild[i].remove();
+	    if (ulChild.length > this.size) {
+	      ulChild[0].remove();
+	    }
+	    for (var i = 0; i < ulChild.length; i++) {
+	      ulChild[i].style.opacity = 1 - 0.1 * i;
 	    }
 	    for (var i = 0; i < this.size; i++) {
 	      ul.appendChild(this.liArray[i]);

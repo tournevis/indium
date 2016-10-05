@@ -1,10 +1,11 @@
 let listManager = {
-  size : 10 ,
+  size : 9 ,
   id : '',
   liArray : [],
 //  liArray.length = this.size,
-  create : function(){
-
+  create : function(id){
+    this.id =id;
+    this.liArray.length = this.size;
   },
   pushTweet : function ( tweetName, screenName, tweetContent) {
     var li = document.createElement('li');
@@ -28,11 +29,14 @@ let listManager = {
     }
     this.liArray.push(li);
   },
-  display : function(id){
-    var ul = document.getElementById(id);
+  display : function(){
+    var ul = document.getElementById(this.id);
     var ulChild = ul.children;
-    for (var i = 9; i < ulChild.length; i++) {
-      ulChild[i].remove();
+    if(ulChild.length>this.size){
+        ulChild[0].remove();
+    }
+    for (var i = 0; i < ulChild.length; i++) {
+        ulChild[i].style.opacity = 1 -( 0.1*i);
     }
     for (var i = 0; i < this.size; i++) {
       ul.appendChild(this.liArray[i]);
