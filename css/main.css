@@ -7,6 +7,7 @@ body {
   height: 100%;
   font-family:Gotham-Book;
   background: radial-gradient(ellipse at center, #1e499c 0%,#252b62 37%,#141540 100%);
+  overflow-y: hidden;
 }
 
 .searchIntro > h2{
