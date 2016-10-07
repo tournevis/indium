@@ -72,13 +72,23 @@ let utils = {
 	fadeOut : function (el){
 	 el.style.opacity = 1;
 	 (function fade() {
-		 console.log("bolbos");
+
 		 if ((el.style.opacity -= .1) < 0) {
 			 el.style.display = "none";
 		 } else {
 			 requestAnimationFrame(fade);
 		 }
 	 })();
- 	}
+ },
+ fadeIn : function fadeIn(el) {
+    var op = 0.1;  // initial opacity
+    var timer = setInterval(function () {
+        if (op >= 1){
+            clearInterval(timer);
+        }
+        el.style.opacity = op;
+        op += 0.1;
+    }, 20);
+	}
 }
 module.exports =utils

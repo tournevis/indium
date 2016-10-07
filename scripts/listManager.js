@@ -2,9 +2,11 @@ let listManager = {
   size : 9 ,
   id : '',
   liArray : [],
+  listEl : '' ,
 //  liArray.length = this.size,
   create : function(id){
     this.id =id;
+    this.listEl = document.getElementById(this.id);
     this.liArray.length = this.size;
   },
   pushTweet : function ( tweetName, screenName, tweetContent) {
@@ -22,10 +24,10 @@ let listManager = {
   	li.appendChild(sName);
   	li.appendChild(sScreen);
   	li.appendChild(sContent);
+
     for (var i = 0; i < this.size; i++) {
       this.liArray[i+1] = this.liArray[i]
       this.liArray[0] = li
-
     }
     this.liArray.push(li);
   },

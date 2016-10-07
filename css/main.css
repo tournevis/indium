@@ -8,6 +8,10 @@ body {
   font-family:Gotham-Book;
   background: radial-gradient(ellipse at center, #1e499c 0%,#252b62 37%,#141540 100%);
   overflow-y: hidden;
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+ -moz-user-select: none;     /* Firefox all */
+ -ms-user-select: none;      /* IE 10+ */
+ user-select: none;
 }
 
 .searchIntro > h2{
@@ -26,6 +30,8 @@ letter-spacing: 2px;
   color: white;
   background: rgba(238, 238, 238, 0);
   font-size: 1.1em;
+
+  z-index: 3;
 }
 #inputTweet{
   font-size: 2em;
@@ -54,9 +60,10 @@ button >img{
   width: 100px;
   height: 100px
 }
-#sun{
-  display: none;
-}
+
+canvas{
+  z-index: 2;
+  }
 .listContainer{
     list-style: none;
     position: absolute;
@@ -66,6 +73,7 @@ button >img{
     text-align: right;
     color: white;
     padding: 10px;
+    z-index: 1;
     /*background: rgba(255,255,255,0.2);*/
 }
 .listContainer > ul {
@@ -99,5 +107,11 @@ button >img{
   display: block;
   font-size: 0.6em;
   font-family: 'Gotham-Book';
-
+}
+#data{
+  opacity: 0;
+  color: white;
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
 }

@@ -77,15 +77,19 @@
 
 	var socket = (0, _socket2.default)('http://5.196.7.169:3030');
 
-	console.log(_utils2.default);
-	window.onload = function () {
-		var b = document.getElementById("searchButton"),
-		    width = window.innerWidth,
-		    height = window.innerHeight;
+	var b = document.getElementById("searchButton"),
+	    nbPart = document.getElementById("nbPart"),
+	    nbTweet = document.getElementById("nbTweet"),
+	    width = window.innerWidth,
+	    height = window.innerHeight,
+	    tweetCounter = 0;
+	_listManager2.default.create('tweetList');
 
-		var stage = new _pixi2.default.Container(),
-		    renderer = _pixi2.default.autoDetectRenderer(width, height, { antialias: false, transparent: true, resolution: 1 });
-		document.body.appendChild(renderer.view);
+	var stage = new _pixi2.default.Container(),
+	    renderer = _pixi2.default.autoDetectRenderer(width, height, { antialias: false, transparent: true, resolution: 1 });
+	document.body.appendChild(renderer.view);
+
+	window.onload = function () {
 
 		_pixi2.default.loader.add("./assets/sun.png").add("./assets/pSprite.png").load(setup);
 
@@ -93,9 +97,10 @@
 		    sun2 = _astate2.default.create(800, 600, 0, 0),
 		    emitter = {
 			x: 100,
-			y: 0
+			y: -50
 		},
 		    particles = [],
+		    maxParticle = 500,
 		    numParticles = 0;
 		sun1.mass = 10000;
 		sun1.radius = 10;
@@ -104,39 +109,84 @@
 
 		function setup() {
 			var sprite = new _pixi2.default.Sprite(_pixi2.default.loader.resources["./assets/sun.png"].texture);
-			sun1.sprite = _pixi2.default.Sprite.fromImage('./assets/sun.png');
-			sun1.sprite.x = sun1.x - 50;
-			sun1.sprite.y = sun1.y - 50;
-			stage.addChild(sun1.sprite);
-			sun2.sprite = _pixi2.default.Sprite.fromImage('./assets/sun.png');
-			sun2.sprite.x = sun2.x - 50;
-			sun2.sprite.y = sun2.y - 50;
-			stage.addChild(sun2.sprite);
+			interactiveSprite(sun1, './assets/sun.png');
+			interactiveSprite(sun2, './assets/sun.png');
 		}
 
-		_listManager2.default.create('tweetList');
-		update();
+		function interactiveSprite(sun, path) {
+			sun.sprite = _pixi2.default.Sprite.fromImage('./assets/sun.png');
+			sun.sprite.anchor.x = 0.5;
+			sun.sprite.anchor.y = 0.5;
+			sun.sprite.x = sun.x;
+			sun.sprite.y = sun.y;
+			sun.sprite.interactive = true;
+			sun.sprite.on('mousedown', onDragStart).on('touchstart', onDragStart).on('mouseup', onDragEnd).on('mouseupoutside', onDragEnd).on('touchend', onDragEnd).on('touchendoutside', onDragEnd).on('mousemove', onDragMove).on('touchmove', onDragMove);
+			stage.addChild(sun.sprite);
+		}
+		function onDown(eventData) {
+			this.x = eventData.data.originalEvent.movementX;
+			this.y = eventData.data.originalEvent.movementY;
+		}
+		function onDragStart(event) {
+			this.data = event.data;
+			this.alpha = 0.8;
+			this.dragging = true;
+		}
+		function onDragEnd() {
+			this.alpha = 1;
+			this.dragging = false;
+			this.data = null;
+		}
+		function onDragMove() {
+			if (this.dragging) {
+				var newPosition = this.data.getLocalPosition(this.parent);
+				this.position.x = newPosition.x;
+				this.position.y = newPosition.y;
+				moveSun(newPosition.x, newPosition.y);
+			}
+		}
+		function moveSun(x, y) {
+			if (sun1.sprite.dragging) {
+				sun1.x = x;
+				sun1.y = y;
+			} else {
+				sun2.x = x;
+				sun2.y = y;
+			}
+		}
 
-
+		function pushParticle(nP) {
+			for (var i = 0; i < nP; i += 1) {
+				var p = _astate2.default.create(emitter.x, emitter.y, _utils2.default.randomRange(7, 8), Math.PI / 2 + _utils2.default.randomRange(-0.1, 0.1));
+				p.addGravitation(sun1);
+				p.addGravitation(sun2);
+				p.radius = 3;
+				p.sprite = _pixi2.default.Sprite.fromImage('./assets/pSprite.png');
+				p.sprite.x = p.x;
+				p.sprite.y = p.y;
+				stage.addChild(p.sprite);
+				particles.push(p);
+			}
+		}
 		function update() {
 
 			for (var i = 0; i < numParticles; i += 1) {
 				var p = particles[i];
 				p.update();
-				draw(p, 'rgba(255, 255, 255, 0.5)');
-				if (p.x > width || p.x < 0 || p.y > height || p.y < 0) {
-					p.x = emitter.x;
-					p.y = emitter.y;
-					p.setSpeed(_utils2.default.randomRange(7, 8));
-					p.setHeading(Math.PI / 2 + _utils2.default.randomRange(-.1, .1));
+				draw(p);
+				if (p.x > width || p.x < 0 || p.y > height || p.y < -50) {
+
+					p.sprite.destroy();
+					particles.splice(i, 1);
+					numParticles--;
 				}
 			}
+			if (sun1.sprite) {}
 			renderer.render(stage);
-
 			requestAnimationFrame(update);
 		}
-
-		function draw(p, color) {
+		update();
+		function draw(p) {
 			p.sprite.x = p.x;
 			p.sprite.y = p.y;
 		}
@@ -153,28 +203,32 @@
 				error.innerHTML = ' Filter is too short  !';
 				console.log("Filter not enough long  : " + filter);
 			}
+			var dataIn = document.getElementById('data');
+			_utils2.default.fadeIn(dataIn);
 		};
 		socket.on('connect', function () {
-			console.log('yo');
+			console.log('yo from server');
 		});
-		socket.on('newTweet', function (data) {
-			console.log(data);
-			_listManager2.default.pushTweet(data.name, data.screenName, data.content);
-			numParticles += 1;
-			for (var i = 0; i < numParticles; i += 1) {
-				var p = _astate2.default.create(emitter.x, emitter.y, _utils2.default.randomRange(7, 8), Math.PI / 2 + _utils2.default.randomRange(-0.1, 0.1));
-				p.addGravitation(sun1);
-				p.addGravitation(sun2);
-				p.radius = 3;
-				p.sprite = _pixi2.default.Sprite.fromImage('./assets/pSprite.png');
-				p.sprite.x = p.x;
-				p.sprite.y = p.y;
-				stage.addChild(p.sprite);
-				particles.push(p);
-			}
 
+		socket.on('newTweet', function (data) {
+			tweetCounter++;
+			_listManager2.default.pushTweet(data.name, data.screenName, data.content);
 			_listManager2.default.display();
+			if (numParticles < maxParticle) {
+				numParticles += data.content.length;
+			}
+			pushParticle(numParticles);
+			nbPart.innerHTML = numParticles;
+			nbTweet.innerHTML = tweetCounter;
 		});
+	};
+	window.onresize = function (event) {
+		width = window.innerWidth, height = window.innerHeight;
+
+		renderer.view.style.width = width + "px";
+		renderer.view.style.height = height + "px";
+
+		renderer.resize(width, height);
 	};
 
 /***/ },
@@ -365,13 +419,23 @@
 		fadeOut: function fadeOut(el) {
 			el.style.opacity = 1;
 			(function fade() {
-				console.log("bolbos");
+
 				if ((el.style.opacity -= .1) < 0) {
 					el.style.display = "none";
 				} else {
 					requestAnimationFrame(fade);
 				}
 			})();
+		},
+		fadeIn: function fadeIn(el) {
+			var op = 0.1;
+			var timer = setInterval(function () {
+				if (op >= 1) {
+					clearInterval(timer);
+				}
+				el.style.opacity = op;
+				op += 0.1;
+			}, 20);
 		}
 	};
 	module.exports = utils;
@@ -8024,9 +8088,11 @@
 	  size: 9,
 	  id: '',
 	  liArray: [],
+	  listEl: '',
 
 	  create: function create(id) {
 	    this.id = id;
+	    this.listEl = document.getElementById(this.id);
 	    this.liArray.length = this.size;
 	  },
 	  pushTweet: function pushTweet(tweetName, screenName, tweetContent) {
@@ -8044,6 +8110,7 @@
 	    li.appendChild(sName);
 	    li.appendChild(sScreen);
 	    li.appendChild(sContent);
+
 	    for (var i = 0; i < this.size; i++) {
 	      this.liArray[i + 1] = this.liArray[i];
 	      this.liArray[0] = li;
