@@ -1,3 +1,4 @@
+/* Class utils, with lot of tools */
 let utils = {
 	norm: function(value, min, max) {
 		return (value - min) / (max - min);

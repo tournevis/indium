@@ -33,6 +33,16 @@ letter-spacing: 2px;
 
   z-index: 3;
 }
+#tips{
+  position: absolute;
+  bottom: -50px;
+  left: 0;
+  font-size: 0.8em;
+  width: 100%;
+  text-align: center;
+  opacity: .7;
+
+}
 #inputTweet{
   font-size: 2em;
   width: 100%;

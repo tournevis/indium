@@ -1,3 +1,5 @@
+/* Particle Class based on coding math tutorial */
+/* Link here : https://www.youtube.com/user/codingmath */
 let astate = {
 	x: 0,
 	y: 0,
@@ -10,6 +12,7 @@ let astate = {
 	gravity: 0,
 	springs: null,
 	gravitations: null,
+	sprite:'',
   letter : "#",
 
 	create: function(x, y, speed, direction, grav) {
@@ -76,9 +79,6 @@ let astate = {
 			this.gravitateTo(this.gravitations[i]);
 		}
 	},
-
-
-
 	angleTo: function(p2) {
 		return Math.atan2(p2.y - this.y, p2.x - this.x);
 	},

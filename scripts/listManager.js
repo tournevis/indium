@@ -1,3 +1,4 @@
+/* My List manager class to control tweet list */
 let listManager = {
   size : 9 ,
   id : '',

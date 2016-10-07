@@ -118,6 +118,12 @@ window.onload = function() {
 			particles.push(p);
 		}
 	}
+	function draw(p) {
+		p.sprite.x = p.x;
+		p.sprite.y = p.y;
+	}
+
+	/* LOOP Function right here */
 	function update() {
 
 		for(var i = 0; i < numParticles; i += 1) {
@@ -141,17 +147,12 @@ window.onload = function() {
 				numParticles --;
 			}
 		}
-		if(sun1.sprite){
-
-		}
 		renderer.render(stage);
 		requestAnimationFrame(update);
 	}
-		update();
-	function draw(p) {
-		p.sprite.x = p.x;
-		p.sprite.y = p.y;
-	}
+	update();
+
+	/* UI CONTROL And Sockets */
 
 	b.onclick = function(){
 		 let filter = document.getElementById('inputTweet').value
@@ -168,6 +169,9 @@ window.onload = function() {
 		 let dataIn = document.getElementById('data');
 		 utils.fadeIn(dataIn);
 	 }
+
+	 /* SOCKET PART */
+
 	 socket.on('connect', function(){
 	   console.log('yo from server');
 	 });
@@ -184,6 +188,7 @@ window.onload = function() {
 		nbTweet.innerHTML = tweetCounter;
 	 })
 }
+
 window.onresize = function (event){
 	width  = window.innerWidth,
  	height  = window.innerHeight;
